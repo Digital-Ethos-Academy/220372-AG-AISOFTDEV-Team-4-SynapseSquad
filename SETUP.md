@@ -111,25 +111,6 @@ If consuming the API, ensure CORS is configured (already allows `http://localhos
 
 ---
 
-## 6. Running Both Concurrently
-
-Option A: Two terminals (recommended during development)
-1. Terminal A → backend: activate venv, run uvicorn.
-2. Terminal B → frontend: run `npm start`.
-
-Option B: Use PowerShell background job (optional):
-```powershell
-Start-Job -ScriptBlock { Set-Location backend; ./.venv/Scripts/Activate.ps1; uvicorn main:app --reload --port 8000 }
-Set-Location frontend
-npm start
-```
-
-Option C: Create a simple root `dev.ps1` script (future enhancement) to orchestrate both.
-
-Already implemented: see Section 9 for usage.
-
----
-
 ## 7. Directory Overview
 
 | Path | Purpose |
@@ -157,51 +138,6 @@ Check active environment variables:
 ```powershell
 Get-Content .env
 ```
-
----
-
-## 9. One-Command Dev Start (PowerShell & Bash)
-
-To streamline starting both backend and frontend, this repo includes helper scripts at the project root:
-
-### PowerShell (Recommended on Windows)
-
-Script: `dev.ps1`
-
-Features:
-- Creates/activates `backend/.venv` if missing
-- Installs Python deps if `uvicorn` absent (uses `requirements.txt`)
-- Loads `backend/.env` automatically
-- Starts backend (`uvicorn main:app --reload --port <port>`) then frontend (`npm start`)
-- Graceful shutdown of backend when you exit React or press Ctrl+C
-
-Usage (from repo root):
-```powershell
-./dev.ps1               # start on default port 8000
-./dev.ps1 -BackendPort 8081       # custom backend port
-./dev.ps1 -ReinstallPython        # force re-install Python deps
-./dev.ps1 -Quiet                  # minimal logging
-```
-
-Environment precedence:
-- If `backend/.env` contains `BACKEND_PORT`, it overrides `-BackendPort`.
-- Sets default `FRONT_END_URL` to `http://localhost:3000` if not present.
-- Sets `REACT_APP_API_BASE_URL` for the frontend if missing.
-
-Verification endpoints after start:
-```text
-Backend:  http://localhost:<PORT>/status
-Frontend: http://localhost:3000
-```
-
-Requirements:
-- Run inside Git Bash or WSL (not plain Windows PowerShell)
-- Creates `backend/.venv`, installs deps, loads `.env`, starts both services
-
-If you see `/bin/bash not found`, install Git for Windows and use the bundled Git Bash or enable WSL.
-
-### Choosing a Script
-- Use `dev.ps1` for native Windows development.
 
 ---
 
