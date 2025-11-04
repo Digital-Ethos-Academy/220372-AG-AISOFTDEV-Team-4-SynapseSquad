@@ -11,7 +11,7 @@ Install the following before proceeding:
 | Tool | Recommended Version | Check Command |
 |------|---------------------|---------------|
 | Python | 3.11+ (3.11.9 preferred) | `python --version` |
-| Node.js | 18+ LTS | `node --version` |
+| Node.js | 22.19.0+ | `node --version` |
 | npm | Comes with Node.js | `npm --version` |
 
 ---
