@@ -84,6 +84,27 @@ For active development with automatic code reloading:
 ./docker-start.sh --dev
 ```
 
+### Rebuilding Containers
+
+When you need to rebuild from scratch (after changing environment variables, Dockerfiles, or dependencies):
+
+```powershell
+# Windows
+.\docker-rebuild.ps1           # Production rebuild
+.\docker-rebuild.ps1 -Dev      # Development rebuild
+
+# Linux/macOS
+./docker-rebuild.sh
+./docker-rebuild.sh --dev
+```
+
+**When to use docker-rebuild:**
+- Changed environment variables (REACT_APP_BACK_END_URL)
+- Modified Dockerfile
+- Updated package.json or requirements.txt
+- Frontend can't connect to backend
+- Need a clean slate
+
 ### Manual Docker Compose
 
 ```bash
@@ -98,6 +119,9 @@ docker compose logs -f
 
 # Stop containers
 docker compose down
+
+# Stop all Docker containers (all projects)
+docker stop $(docker ps -q)
 ```
 
 ## Configuration
@@ -267,13 +291,26 @@ docker compose up --build -d frontend
 - **Exposed Port**: 8000
 - **User**: appuser (non-root)
 - **Health Check**: GET /status every 30s
+- **Build Strategy**: Installs Python packages from requirements.txt
 
-#### Frontend Container
+#### Frontend Container (Production)
+- **Base Image**: node:22-alpine (builder), nginx:alpine (runtime)
+- **Working Directory**: /app (build), /usr/share/nginx/html (runtime)
+- **Exposed Port**: 3000
+- **User**: appuser (non-root)
+- **Health Check**: wget localhost:3000 every 30s
+- **Build Strategy**: 
+  - Stage 1: Copies local node_modules and runs `npm run build`
+  - Stage 2: Serves static files with nginx
+  - Uses local node_modules to avoid npm install issues in Docker
+
+#### Frontend Container (Development)
 - **Base Image**: node:22-alpine
 - **Working Directory**: /app
 - **Exposed Port**: 3000
 - **User**: appuser (non-root)
-- **Health Check**: wget localhost:3000 every 30s
+- **Build Strategy**: Copies local node_modules and runs `npm start`
+- **Hot-Reload**: Enabled via volume mounts
 
 ### Network Configuration
 
@@ -542,33 +579,82 @@ docker system prune -a --volumes -f
 
 ## Quick Reference
 
+### Startup Scripts
+
+| Script | Purpose | Use When |
+|--------|---------|----------|
+| `.\docker-start.ps1` | Normal startup (uses cache) | Daily use, restarting containers |
+| `.\docker-start.ps1 -Dev` | Development mode (hot-reload) | Active development |
+| `.\docker-rebuild.ps1` | Force rebuild (no cache) | After config changes, fixing issues |
+| `.\docker-rebuild.ps1 -Dev` | Dev mode rebuild | After dev config changes |
+
 ### Common Commands
 
 ```bash
-# Start (production)
+# Start containers (production)
 .\docker-start.ps1
 
-# Start (development)
+# Start containers (development with hot-reload)
 .\docker-start.ps1 -Dev
 
-# View logs
+# Rebuild containers (after changes)
+.\docker-rebuild.ps1
+
+# View logs (follow mode)
 docker compose logs -f
 
-# Stop
+# View logs for specific service
+docker compose logs backend
+docker compose logs frontend
+
+# Stop containers
 docker compose down
 
-# Restart
+# Stop all Docker containers (all projects)
+docker stop $(docker ps -q)
+
+# Restart containers
 docker compose restart
 
-# Check status
+# Check container status
 docker compose ps
 
 # Access container shell
 docker compose exec backend bash
 docker compose exec frontend sh
 
-# Clean up
+# Clean up unused resources
 docker system prune -f
+
+# Clean up everything (nuclear option)
+docker system prune -a --volumes -f
+```
+
+### Workflow Examples
+
+```powershell
+# First time setup
+cd frontend
+npm install --legacy-peer-deps
+cd ..
+.\docker-start.ps1
+
+# Daily development
+.\docker-start.ps1 -Dev
+# ... make code changes ...
+docker compose down
+
+# After changing environment variables
+.\docker-rebuild.ps1
+
+# After updating dependencies
+cd frontend
+npm install --legacy-peer-deps
+cd ..
+.\docker-rebuild.ps1
+
+# Troubleshooting connection issues
+.\docker-rebuild.ps1
 ```
 
 ## Summary
