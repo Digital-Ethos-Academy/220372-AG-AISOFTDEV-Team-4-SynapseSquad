@@ -1,12 +1,20 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import dotenv
+
+# Load environment variables from .env file
+dotenv.load_dotenv()
+
 
 app = FastAPI()
 
 # CORS configuration for React frontend
+frontend_url = os.getenv("FRONT_END_URL", "ERROR_NO_FRONTEND_URL_SET")
+print("Frontend URL for CORS:", frontend_url)
 origins = [
-    "http://localhost:3000",
-    "localhost:3000"
+    frontend_url,
+    "localhost:3000"  # Keep as fallback for local development
 ]
 app.add_middleware(
     CORSMiddleware,
