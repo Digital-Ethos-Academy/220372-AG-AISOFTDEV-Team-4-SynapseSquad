@@ -63,6 +63,9 @@ Key performance indicators (KPIs) include user adoption rates, task prioritizati
 ## 9. Appendix & Open Questions
 - Dependencies include FastAPI, React, and SQLite.
 - Open questions: What additional AI features could enhance user experience in future iterations?
+- Add ability to rank AI suggestions with thumbs up and down.
+- Add ability to input the final time required to complete task when completed to help with training the AI in the future.
+- Improve ranking of tasks through AI. Use more advanced ranking criteria, crewAI, or langchain to analyze the tasks.
 
 ## 10. API Design
 1. /tasks (CRUD)
