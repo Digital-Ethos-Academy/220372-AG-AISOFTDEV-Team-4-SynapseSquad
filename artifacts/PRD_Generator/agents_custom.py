@@ -475,7 +475,7 @@ async def get_crew_info():
 if __name__ == "__main__":
     print("🚀 Starting Business Idea to PRD Generator API...")
     print("📋 This service uses CrewAI to transform business ideas into comprehensive PRD documents")
-    print("🔗 API Documentation available at: http://localhost:8000/docs")
+    print("🔗 API Documentation available at: http://localhost:8005/docs")
     
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8005)
 

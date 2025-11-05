@@ -3,7 +3,7 @@
 
 class PRDGenerator {
     constructor() {
-        this.apiBaseUrl = 'http://localhost:8000';
+        this.apiBaseUrl = 'http://localhost:8005';
         this.currentRequest = null;
         this.init();
     }
