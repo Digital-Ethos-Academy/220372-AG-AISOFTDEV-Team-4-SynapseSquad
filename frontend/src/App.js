@@ -15,45 +15,10 @@ function App() {
   const [error, setError] = useState(null);
   
   // Task management state
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Project Alpha Kickoff",
-      description: "Initial planning and team alignment",
-      deadline: "2024-03-15",
-      status: "in-progress",
-      estimated_duration: 4,
-      priority_score: 92
-    },
-    {
-      id: 2,
-      title: "Develop Feature X",
-      description: "Implement core functionality",
-      deadline: "2024-03-20",
-      status: "pending",
-      estimated_duration: 8,
-      priority_score: 78
-    },
-    {
-      id: 3,
-      title: "Research Market Trends",
-      description: "Analyze competitor strategies",
-      deadline: "2024-03-25",
-      status: "pending",
-      estimated_duration: 3,
-      priority_score: 65
-    },
-    {
-      id: 4,
-      title: "Submit project report",
-      description: "Send final report to manager",
-      deadline: "2025-11-06",
-      status: "pending",
-      estimated_duration: 4,
-      priority_score: 85
-    }
-  ]);
+  const [tasks, setTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [tasksLoading, setTasksLoading] = useState(true);
+  const [tasksError, setTasksError] = useState(null);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -71,7 +36,25 @@ function App() {
       }
     };
 
+    const fetchTasks = async () => {
+      try {
+        setTasksLoading(true);
+        const response = await fetch(`${process.env.REACT_APP_BACK_END_URL}/tasks`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setTasks(data);
+      } catch (err) {
+        setTasksError("Failed to fetch tasks from the backend.");
+        console.error("Error fetching tasks:", err);
+      } finally {
+        setTasksLoading(false);
+      }
+    };
+
     fetchStatus();
+    fetchTasks();
   }, []);
 
   const handleMenuToggle = () => {
@@ -83,41 +66,84 @@ function App() {
   };
 
   // Task management functions
-  const calculatePriorityScore = (deadline, estimatedDuration) => {
-    const daysUntilDeadline = Math.floor((new Date(deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-    const score = 100 - (daysUntilDeadline * 5) - (estimatedDuration * 3);
-    return Math.max(1, Math.min(100, score));
+  const handleCreateTask = async (task) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACK_END_URL}/tasks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(task),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const newTask = await response.json();
+      setTasks([...tasks, newTask]);
+      
+      // Show AI confirmation toast
+      const priorityLevel = newTask.priority_score >= 70 ? 'High' : newTask.priority_score >= 40 ? 'Medium' : 'Low';
+      toast.success('Task created successfully!', {
+        description: `AI Priority Score: ${newTask.priority_score || 0} (${priorityLevel} Priority)`,
+      });
+    } catch (err) {
+      console.error("Error creating task:", err);
+      toast.error('Failed to create task', {
+        description: 'Please try again later.',
+      });
+    }
   };
 
-  const handleCreateTask = (task) => {
-    const aiGeneratedScore = calculatePriorityScore(task.deadline, task.estimated_duration);
-    const newTask = {
-      ...task,
-      id: tasks.length + 1,
-      priority_score: aiGeneratedScore
-    };
-    setTasks([...tasks, newTask]);
-    
-    // Show AI confirmation toast
-    const priorityLevel = aiGeneratedScore >= 70 ? 'High' : aiGeneratedScore >= 40 ? 'Medium' : 'Low';
-    toast.success('Task created successfully!', {
-      description: `AI Priority Score: ${aiGeneratedScore} (${priorityLevel} Priority)`,
-    });
+  const handleUpdateTask = async (updatedTask) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACK_END_URL}/tasks/${updatedTask.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedTask),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const taskFromServer = await response.json();
+      setTasks(tasks.map(t => t.id === taskFromServer.id ? taskFromServer : t));
+      setSelectedTask(taskFromServer);
+      
+      toast.success('Task updated successfully!');
+    } catch (err) {
+      console.error("Error updating task:", err);
+      toast.error('Failed to update task', {
+        description: 'Please try again later.',
+      });
+    }
   };
 
-  const handleUpdateTask = (updatedTask) => {
-    const taskWithScore = {
-      ...updatedTask,
-      priority_score: calculatePriorityScore(updatedTask.deadline, updatedTask.estimated_duration)
-    };
-    setTasks(tasks.map(t => t.id === taskWithScore.id ? taskWithScore : t));
-    setSelectedTask(taskWithScore);
-  };
+  const handleDeleteTask = async (id) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACK_END_URL}/tasks/${id}`, {
+        method: 'DELETE',
+      });
 
-  const handleDeleteTask = (id) => {
-    setTasks(tasks.filter(t => t.id !== id));
-    if (selectedTask?.id === id) {
-      setSelectedTask(null);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setTasks(tasks.filter(t => t.id !== id));
+      if (selectedTask?.id === id) {
+        setSelectedTask(null);
+      }
+      
+      toast.success('Task deleted successfully!');
+    } catch (err) {
+      console.error("Error deleting task:", err);
+      toast.error('Failed to delete task', {
+        description: 'Please try again later.',
+      });
     }
   };
 
@@ -161,12 +187,22 @@ function App() {
         return (
           <div className="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
             <div className="lg:w-[400px] w-full">
-              <TaskList 
-                tasks={tasks} 
-                selectedTask={selectedTask}
-                onSelectTask={setSelectedTask}
-                onCreateTask={handleCreateTask}
-              />
+              {tasksLoading ? (
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-blue-600">Loading tasks...</div>
+                </div>
+              ) : tasksError ? (
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-red-600">Error: {tasksError}</div>
+                </div>
+              ) : (
+                <TaskList 
+                  tasks={tasks} 
+                  selectedTask={selectedTask}
+                  onSelectTask={setSelectedTask}
+                  onCreateTask={handleCreateTask}
+                />
+              )}
             </div>
             <div className="flex-1">
               <TaskDetailsPanel 
