@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { AlertCircle, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { AlertCircle } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -23,26 +23,14 @@ export function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
   const [status, setStatus] = useState('pending');
   const [estimatedDuration, setEstimatedDuration] = useState(4);
   const [tshirtSize, setTshirtSize] = useState('M');
+  const [priorityScore, setPriorityScore] = useState(50);
   const [error, setError] = useState('');
-  const [calculatedPriority, setCalculatedPriority] = useState(null);
-
-  // Calculate priority score in real-time
-  useEffect(() => {
-    if (deadline) {
-      const daysUntilDeadline = Math.floor((new Date(deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-      const score = 100 - (daysUntilDeadline * 5) - (estimatedDuration * 3);
-      const clampedScore = Math.max(1, Math.min(100, score));
-      setCalculatedPriority(clampedScore);
-    } else {
-      setCalculatedPriority(null);
-    }
-  }, [deadline, estimatedDuration]);
 
   // Update estimated duration when t-shirt size changes
   const handleTshirtSizeChange = (size) => {
     setTshirtSize(size);
     
-    // AI-suggested duration based on t-shirt size
+    // Duration suggestions based on t-shirt size
     const durationMap = {
       'XS': 2,
       'S': 4,
@@ -77,6 +65,7 @@ export function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
       status,
       estimated_duration: estimatedDuration,
       tshirt_size: tshirtSize,
+      priority_score: priorityScore,
     });
 
     // Reset form
@@ -86,8 +75,8 @@ export function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
     setStatus('pending');
     setEstimatedDuration(4);
     setTshirtSize('M');
+    setPriorityScore(50);
     setError('');
-    setCalculatedPriority(null);
     onOpenChange(false);
   };
 
@@ -98,25 +87,22 @@ export function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
     setStatus('pending');
     setEstimatedDuration(4);
     setTshirtSize('M');
+    setPriorityScore(50);
     setError('');
-    setCalculatedPriority(null);
     onOpenChange(false);
   };
 
   const getPriorityLevel = (score) => {
-    if (score >= 70) return { label: 'High Priority', color: 'text-red-600', variant: 'destructive' };
-    if (score >= 40) return { label: 'Medium Priority', color: 'text-yellow-600', variant: 'default' };
-    return { label: 'Low Priority', color: 'text-green-600', variant: 'secondary' };
+    if (score >= 70) return { label: 'High', variant: 'destructive' };
+    if (score >= 40) return { label: 'Medium', variant: 'default' };
+    return { label: 'Low', variant: 'secondary' };
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-blue-500" />
-            Create New Task
-          </DialogTitle>
+          <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -174,12 +160,9 @@ export function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
             </div>
           </div>
 
-          {/* AI T-Shirt Size Selector */}
-          <div className="space-y-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-4 h-4 text-blue-600" />
-              <Label className="text-blue-900">AI T-Shirt Size (Task Complexity)</Label>
-            </div>
+          {/* T-Shirt Size Selector */}
+          <div className="space-y-2">
+            <Label>T-Shirt Size (Task Complexity)</Label>
             <div className="flex gap-2">
               {(['XS', 'S', 'M', 'L', 'XL']).map((size) => (
                 <Button
@@ -193,8 +176,8 @@ export function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
                 </Button>
               ))}
             </div>
-            <p className="text-xs text-blue-700 mt-2">
-              AI will auto-adjust estimated duration based on size
+            <p className="text-xs text-slate-500">
+              Duration suggestion will auto-adjust based on size
             </p>
           </div>
 
@@ -218,64 +201,28 @@ export function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
             </div>
           </div>
 
-          {/* AI Priority Score Preview */}
-          {calculatedPriority !== null && (
-            <div className="space-y-3 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-300">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-blue-600" />
-                  <Label className="text-blue-900">AI-Generated Priority Score</Label>
-                </div>
-                <Badge variant="outline" className="bg-white text-xs">
-                  Auto-calculated
-                </Badge>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <div className="flex-1">
-                  <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full transition-all ${
-                        calculatedPriority >= 70
-                          ? 'bg-red-500'
-                          : calculatedPriority >= 40
-                          ? 'bg-yellow-500'
-                          : 'bg-green-500'
-                      }`}
-                      style={{ width: `${calculatedPriority}%` }}
-                    />
-                  </div>
-                </div>
-                <Badge variant={getPriorityLevel(calculatedPriority).variant} className="min-w-[80px] justify-center">
-                  {calculatedPriority}
-                </Badge>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-700">
-                  {getPriorityLevel(calculatedPriority).label}
-                </p>
-                <p className="text-xs text-slate-500 italic">
-                  This score will be saved
-                </p>
-              </div>
-              
-              {calculatedPriority >= 70 && (
-                <Alert className="bg-red-50 border-red-200">
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                  <AlertDescription className="text-red-800 text-sm">
-                    This task will be high priority. Consider addressing it soon.
-                  </AlertDescription>
-                </Alert>
-              )}
-              
-              <div className="pt-2 border-t border-blue-200">
-                <p className="text-xs text-blue-700">
-                  <strong>AI Formula:</strong> Score = 100 - (days_until_deadline × 5) - (estimated_duration × 3)
-                </p>
-              </div>
+          {/* Priority Score Selector */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label>Priority Score</Label>
+              <Badge variant={priorityScore >= 70 ? 'destructive' : priorityScore >= 40 ? 'default' : 'secondary'}>
+                {getPriorityLevel(priorityScore).label}
+              </Badge>
             </div>
-          )}
+            <Slider
+              value={[priorityScore]}
+              onValueChange={([value]) => setPriorityScore(value)}
+              min={1}
+              max={100}
+              step={1}
+              className="py-4"
+            />
+            <div className="flex justify-between text-xs text-slate-500">
+              <span>Low (1)</span>
+              <span className="text-slate-900 font-medium">{priorityScore}</span>
+              <span>High (100)</span>
+            </div>
+          </div>
 
           {error && (
             <Alert variant="destructive">
@@ -290,7 +237,6 @@ export function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
             Cancel
           </Button>
           <Button onClick={handleSubmit}>
-            <Sparkles className="w-4 h-4 mr-2" />
             Create Task
           </Button>
         </DialogFooter>

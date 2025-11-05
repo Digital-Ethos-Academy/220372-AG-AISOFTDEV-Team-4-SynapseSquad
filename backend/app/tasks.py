@@ -77,7 +77,33 @@ def get_task(task_id: int, db: Session = Depends(get_db)):
 @router.post("/tasks", response_model=schemas.Task)
 def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
     try:
-        return crud.create_task(db, task)
+        db_task = crud.create_task(db, task)
+        
+        # Format the response similar to get_task to handle related objects
+        score = None
+        if getattr(db_task, "priority_score", None):
+            try:
+                score = int(getattr(db_task.priority_score, "score", None))
+            except Exception:
+                score = None
+
+        tshirt = None
+        if getattr(db_task, "tshirt_score", None):
+            try:
+                tshirt = getattr(db_task.tshirt_score, "tshirt_size", None)
+            except Exception:
+                tshirt = None
+
+        return {
+            "id": db_task.id,
+            "title": db_task.title,
+            "description": db_task.description,
+            "deadline": db_task.deadline,
+            "estimated_duration": db_task.estimated_duration or 0,
+            "status": db_task.status,
+            "priority_score": score or 0,
+            "tshirt_size": tshirt,
+        }
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
 

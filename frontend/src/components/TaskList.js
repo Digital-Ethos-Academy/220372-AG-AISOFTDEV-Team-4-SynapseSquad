@@ -42,7 +42,7 @@ export function TaskList({ tasks, selectedTask, onSelectTask, onCreateTask }) {
             onClick={() => setFilterPriority('all')}
             className="text-xs lg:text-sm"
           >
-            All Statuses
+            All
           </Button>
           <Button
             variant={filterPriority === 'high' ? 'default' : 'outline'}

@@ -77,21 +77,24 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => null);
+        const errorMessage = errorData?.detail || errorData?.message || `HTTP ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
       }
 
       const newTask = await response.json();
       setTasks([...tasks, newTask]);
       
-      // Show AI confirmation toast
-      const priorityLevel = newTask.priority_score >= 70 ? 'High' : newTask.priority_score >= 40 ? 'Medium' : 'Low';
-      toast.success('Task created successfully!', {
-        description: `AI Priority Score: ${newTask.priority_score || 0} (${priorityLevel} Priority)`,
-      });
+      toast.success('Task created successfully!');
     } catch (err) {
       console.error("Error creating task:", err);
+      const isNetworkError = err.name === 'TypeError' || err.message.includes('fetch');
+      const errorMessage = isNetworkError 
+        ? 'Unable to connect to the server. Please check your connection and try again.'
+        : err.message || 'An unexpected error occurred while creating the task.';
+      
       toast.error('Failed to create task', {
-        description: 'Please try again later.',
+        description: errorMessage,
       });
     }
   };
@@ -107,7 +110,9 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => null);
+        const errorMessage = errorData?.detail || errorData?.message || `HTTP ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
       }
 
       const taskFromServer = await response.json();
@@ -117,8 +122,13 @@ function App() {
       toast.success('Task updated successfully!');
     } catch (err) {
       console.error("Error updating task:", err);
+      const isNetworkError = err.name === 'TypeError' || err.message.includes('fetch');
+      const errorMessage = isNetworkError 
+        ? 'Unable to connect to the server. Please check your connection and try again.'
+        : err.message || 'An unexpected error occurred while updating the task.';
+      
       toast.error('Failed to update task', {
-        description: 'Please try again later.',
+        description: errorMessage,
       });
     }
   };
@@ -130,7 +140,9 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => null);
+        const errorMessage = errorData?.detail || errorData?.message || `HTTP ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
       }
 
       setTasks(tasks.filter(t => t.id !== id));
@@ -141,8 +153,13 @@ function App() {
       toast.success('Task deleted successfully!');
     } catch (err) {
       console.error("Error deleting task:", err);
+      const isNetworkError = err.name === 'TypeError' || err.message.includes('fetch');
+      const errorMessage = isNetworkError 
+        ? 'Unable to connect to the server. Please check your connection and try again.'
+        : err.message || 'An unexpected error occurred while deleting the task.';
+      
       toast.error('Failed to delete task', {
-        description: 'Please try again later.',
+        description: errorMessage,
       });
     }
   };

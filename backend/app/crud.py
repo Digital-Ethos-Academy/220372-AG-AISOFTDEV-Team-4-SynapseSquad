@@ -13,6 +13,11 @@ def get_task(db: Session, task_id: int) -> Optional[models.Task]:
 
 def create_task(db: Session, task: schemas.TaskCreate) -> models.Task:
     data = task.dict()
+    
+    # Extract the optional fields that go to separate tables
+    tshirt_size = data.pop("tshirt_size", None)
+    priority_score = data.pop("priority_score", None)
+    
     # If no user_id provided, ensure a default system user exists and use it.
     if not data.get("user_id"):
         system = db.query(models.User).filter(models.User.email == "system@local").first()
@@ -30,10 +35,34 @@ def create_task(db: Session, task: schemas.TaskCreate) -> models.Task:
             # Raise a ValueError so the HTTP layer can return a 400 with a helpful message
             raise ValueError(f"user_id {supplied} does not exist")
 
+    # Create the main task
     db_task = models.Task(**data)
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
+    
+    # Create related t-shirt size record if provided
+    if tshirt_size:
+        tshirt_record = models.TaskTShirtScore(
+            task_id=db_task.id,
+            tshirt_size=tshirt_size,
+            rationale="User specified"
+        )
+        db.add(tshirt_record)
+    
+    # Create related priority score record if provided
+    if priority_score:
+        priority_record = models.TaskPriorityScore(
+            task_id=db_task.id,
+            score=priority_score
+        )
+        db.add(priority_record)
+    
+    # Commit the related records
+    if tshirt_size or priority_score:
+        db.commit()
+        db.refresh(db_task)
+    
     return db_task
 
 

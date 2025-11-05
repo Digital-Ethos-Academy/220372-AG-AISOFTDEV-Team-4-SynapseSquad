@@ -36,6 +36,23 @@ class TaskCreate(TaskBase):
     # Optional user_id so frontend can omit it for simple flows. If omitted,
     # the backend will attach the task to a default user (created if needed).
     user_id: Optional[int] = None
+    # Optional fields for t-shirt size and priority score
+    tshirt_size: Optional[str] = None
+    priority_score: Optional[int] = None
+
+    @validator("tshirt_size")
+    def validate_tshirt_size(cls, v):
+        if v is not None:
+            allowed_sizes = ["XS", "S", "M", "L", "XL"]
+            if v not in allowed_sizes:
+                raise ValueError(f"T-shirt size must be one of: {', '.join(allowed_sizes)}")
+        return v
+
+    @validator("priority_score")
+    def validate_priority_score(cls, v):
+        if v is not None and (v < 1 or v > 100):
+            raise ValueError("Priority score must be between 1 and 100")
+        return v
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
