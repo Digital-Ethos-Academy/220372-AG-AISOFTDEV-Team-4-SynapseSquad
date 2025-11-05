@@ -227,3 +227,25 @@ task-manager/
 ├── README.md
 └── .env                         # Environment variables
 ```
+
+## 13. Documentation Requirements
+
+- [**Architecture Document**](docs/ARCHITECTURE.md): System architecture overview with PlantUML diagrams (component and sequence) showing React frontend, FastAPI backend, SQLite database, and API interactions. Reference Section 10 (API Design) and Section 11 (Database Schema).
+
+- [**Architecture Decision Records**](docs/ADR.md): Consolidated technical decisions including database selection (SQLite with 5 tables per Section 11), rule-based priority algorithm, modular API architecture, and frontend framework (React + Tailwind).
+
+- [**Security Audit Report**](docs/SECURITY.md): Vulnerability assessment covering SQL injection risks, input validation for all endpoints (Section 10), authentication gaps (users table per Section 11), CORS configuration, and mitigation strategies.
+
+- [**Agile Plan**](docs/AGILE_PLAN.md): Granular task list expanding Section 7 (Release Plan) into actionable items with dependencies and acceptance criteria for each milestone.
+
+- [**AI Artifact Log**](docs/AI_GENERATION_LOG.md): Comprehensive record of AI prompts and outputs for PRD generation, schema.sql creation, API code generation, test suite creation, and security audit. Demonstrates AI integration across SDLC.
+
+## 14. Testing Suite
+
+- [**Backend Unit Tests**](backend/tests/test_main.py): Pytest suite covering all CRUD endpoints (Section 10), AI ranking logic with edge cases (line 119 algorithm validation), size recommendation endpoint, and database operations across all 5 tables (Section 11). 
+
+- [**Frontend Component Tests**](frontend/src/__tests__/): React Testing Library tests for TaskList, TaskForm, and Dashboard components (per Section 12 directory structure). Verify API integration, priority score display, and error handling.
+
+- [**Integration Tests**](backend/tests/test_integration.py): Full task lifecycle with user authentication, task dependencies (task_dependencies table), priority score generation (task_priority_scores table), and t-shirt size scoring (task_tshirt_scores table). 
+
+- [**Database Tests**](backend/tests/test_database.py): Validate foreign key constraints, cascade deletes, timestamp auto-generation, and referential integrity across users, tasks, task_dependencies, task_priority_scores, and task_tshirt_scores tables.
