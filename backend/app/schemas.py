@@ -9,6 +9,13 @@ class TaskBase(BaseModel):
     estimated_duration: Optional[int] = None
     status: Optional[str] = "pending"
 
+    @validator("status")
+    def validate_status(cls, v):
+        allowed_statuses = ["pending", "in_progress", "completed", "blocked"]
+        if v not in allowed_statuses:
+            raise ValueError(f"Status must be one of: {', '.join(allowed_statuses)}")
+        return v
+
     @validator("deadline", pre=True)
     def _coerce_deadline(cls, v):
         # Accept empty string as no deadline
@@ -36,6 +43,14 @@ class TaskUpdate(BaseModel):
     deadline: Optional[datetime] = None
     estimated_duration: Optional[int] = None
     status: Optional[str] = None
+
+    @validator("status")
+    def validate_status(cls, v):
+        if v is not None:
+            allowed_statuses = ["pending", "in_progress", "completed", "blocked"]
+            if v not in allowed_statuses:
+                raise ValueError(f"Status must be one of: {', '.join(allowed_statuses)}")
+        return v
 
     @validator("deadline", pre=True)
     def _coerce_deadline_update(cls, v):

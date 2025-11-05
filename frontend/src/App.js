@@ -186,7 +186,7 @@ function App() {
       case 'tasks':
         return (
           <div className="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
-            <div className="lg:w-[400px] w-full">
+            <div className="lg:w-[400px] w-full lg:overflow-auto">
               {tasksLoading ? (
                 <div className="flex items-center justify-center h-64">
                   <div className="text-blue-600">Loading tasks...</div>
@@ -204,7 +204,7 @@ function App() {
                 />
               )}
             </div>
-            <div className="flex-1">
+            <div className="flex-1 lg:sticky lg:top-0 lg:self-start lg:h-[calc(100vh-8rem)]">
               <TaskDetailsPanel 
                 task={selectedTask}
                 onUpdateTask={handleUpdateTask}
@@ -259,8 +259,8 @@ function App() {
       
       {/* Main Content */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        <main className="flex-1 p-3 lg:p-6 overflow-auto">
-          <div className="container">
+        <main className="flex-1 p-3 lg:p-6 lg:overflow-visible overflow-auto">
+          <div className="container h-full">
             {renderMainContent()}
           </div>
         </main>

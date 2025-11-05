@@ -28,6 +28,12 @@ app.add_middleware(
 def read_root():
     return {"message": "Agile TaskIQ API is running."}
 
+# Status endpoint
+@app.get("/status")
+def get_status():
+    return {"status": "healthy", "message": "API is running.", "version": "1.0.0"}
+
+
 
 # Import and include routers
 from tasks import router as tasks_router

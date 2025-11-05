@@ -87,7 +87,32 @@ def update_task(task_id: int, task: schemas.TaskUpdate, db: Session = Depends(ge
     updated = crud.update_task(db, task_id, task)
     if not updated:
         raise HTTPException(status_code=404, detail="Task not found")
-    return updated
+    
+    # Format the response similar to get_task to handle related objects
+    score = None
+    if getattr(updated, "priority_score", None):
+        try:
+            score = int(getattr(updated.priority_score, "score", None))
+        except Exception:
+            score = None
+
+    tshirt = None
+    if getattr(updated, "tshirt_score", None):
+        try:
+            tshirt = getattr(updated.tshirt_score, "tshirt_size", None)
+        except Exception:
+            tshirt = None
+
+    return {
+        "id": updated.id,
+        "title": updated.title,
+        "description": updated.description,
+        "deadline": updated.deadline,
+        "estimated_duration": updated.estimated_duration or 0,
+        "status": updated.status,
+        "priority_score": score or 0,
+        "tshirt_size": tshirt,
+    }
 
 
 @router.delete("/tasks/{task_id}")

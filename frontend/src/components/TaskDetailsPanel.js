@@ -18,9 +18,22 @@ export function TaskDetailsPanel({ task, onUpdateTask, onDeleteTask }) {
     }
   }, [task]);
 
+  // Helper function to format date for input[type="date"]
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      // Return in YYYY-MM-DD format
+      return date.toISOString().split('T')[0];
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
+    }
+  };
+
   if (!task || !editedTask) {
     return (
-      <div className="flex-1 bg-white rounded-lg border border-slate-200 flex items-center justify-center min-h-64 lg:min-h-0">
+      <div className="bg-white rounded-lg border border-slate-200 flex items-center justify-center min-h-64 h-full">
         <div className="text-center text-slate-400">
           <p>Select a task to view details</p>
         </div>
@@ -49,8 +62,8 @@ export function TaskDetailsPanel({ task, onUpdateTask, onDeleteTask }) {
   };
 
   return (
-    <div className="flex-1 bg-white rounded-lg border border-slate-200 flex flex-col">
-      <div className="p-4 lg:p-6 border-b border-slate-200">
+    <div className="bg-white rounded-lg border border-slate-200 flex flex-col h-full">
+      <div className="p-4 lg:p-6 border-b border-slate-200 flex-shrink-0">
         <h2 className="text-lg lg:text-xl text-slate-900">Task Details & Actions</h2>
       </div>
 
@@ -87,8 +100,9 @@ export function TaskDetailsPanel({ task, onUpdateTask, onDeleteTask }) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="in_progress">In Progress</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="blocked">Blocked</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -97,7 +111,7 @@ export function TaskDetailsPanel({ task, onUpdateTask, onDeleteTask }) {
           <Label>Deadline</Label>
           <Input
             type="date"
-            value={editedTask.deadline}
+            value={formatDateForInput(editedTask.deadline)}
             onChange={(e) => setEditedTask({ ...editedTask, deadline: e.target.value })}
           />
         </div>
@@ -179,7 +193,7 @@ export function TaskDetailsPanel({ task, onUpdateTask, onDeleteTask }) {
         </div>
       </div>
 
-      <div className="p-4 lg:p-6 border-t border-slate-200 flex flex-col lg:flex-row gap-3">
+      <div className="p-4 lg:p-6 border-t border-slate-200 flex flex-col lg:flex-row gap-3 flex-shrink-0">
         <Button onClick={handleSave} className="flex-1">
           <Sparkles className="w-4 h-4 mr-2" />
           Save Changes
