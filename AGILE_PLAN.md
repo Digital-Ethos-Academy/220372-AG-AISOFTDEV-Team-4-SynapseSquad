@@ -13,14 +13,14 @@
 
 ## User Stories & Tasks
 
-### Member 1: Database Design (Already Assigned)
+### Member 1: Database Design (George)
 - [ ] Design and implement `schema.sql` based on PRD database schema.
 - [ ] Ensure tables: users, tasks, task_dependencies, task_priority_scores, task_tshirt_scores.
 - [ ] Add constraints, indexes, and sample data if needed.
 
 ---
 
-### Member 2: Backend Development (FastAPI)
+### Member 2: Backend Development (FastAPI) (Lawrence)
 - [ ] Set up FastAPI project structure.
 - [ ] Implement CRUD endpoints for `/tasks` (GET, POST, PUT, DELETE).
 - [ ] Implement `/ai/rank` endpoint for task priority scoring.
@@ -32,7 +32,7 @@
 
 ---
 
-### Member 3: Frontend Development (React)
+### Member 3: Frontend Development (React) (Owen)
 - [ ] Set up React project and install dependencies (axios, etc.).
 - [ ] Create TaskList component to display tasks.
 - [ ] Create TaskForm component for task creation/editing.
@@ -43,7 +43,7 @@
 
 ---
 
-### Member 4: Integration, Testing, and Documentation
+### Member 4: Integration, Testing, and Documentation 
 - [ ] Write unit tests for backend endpoints (pytest).
 - [ ] Test API integration with frontend (manual & automated).
 - [ ] Identify and document security vulnerabilities.
