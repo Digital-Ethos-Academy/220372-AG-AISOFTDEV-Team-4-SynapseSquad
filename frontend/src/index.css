@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Theme tokens from the Figma artifact to align visual design */
 :root {
   --font-size: 16px;
