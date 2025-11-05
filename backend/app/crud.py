@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from . import schemas, models
+import schemas, models
 
 
 def get_tasks(db: Session) -> List[models.Task]:
