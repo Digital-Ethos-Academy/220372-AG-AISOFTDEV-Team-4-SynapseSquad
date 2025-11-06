@@ -10,11 +10,12 @@ dotenv.load_dotenv()
 app = FastAPI()
 
 # CORS configuration for React frontend
-frontend_url = os.getenv("FRONT_END_URL", "ERROR_NO_FRONTEND_URL_SET")
+frontend_url = os.getenv("FRONT_END_URL", "http://localhost:3000")
 print("Frontend URL for CORS:", frontend_url)
 origins = [
     frontend_url,
-    "localhost:3000"  # Keep as fallback for local development
+    "http://localhost:3000",  # Keep as fallback for local development
+    "http://127.0.0.1:3000"   # Alternative localhost
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -36,12 +37,12 @@ def get_status():
 
 
 # Import and include routers
-from tasks import router as tasks_router
-from ai import router as ai_router
-from users import router as users_router
-from task_dependencies import router as task_deps_router
-from priority_scores import router as priority_scores_router
-from tshirt_scores import router as tshirt_scores_router
+from app.tasks import router as tasks_router
+from app.ai import router as ai_router
+from app.users import router as users_router
+from app.task_dependencies import router as task_deps_router
+from app.priority_scores import router as priority_scores_router
+from app.tshirt_scores import router as tshirt_scores_router
 
 app.include_router(tasks_router)
 app.include_router(ai_router)
@@ -51,7 +52,7 @@ app.include_router(priority_scores_router)
 app.include_router(tshirt_scores_router)
 
 # Ensure database tables are created (safe when using an existing DB)
-from database import engine, Base
-import models
+from app.database import engine, Base
+from app import models
 
 Base.metadata.create_all(bind=engine)

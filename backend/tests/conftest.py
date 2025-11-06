@@ -112,22 +112,13 @@ def client(db_session: Session, default_user: models.User):
 
 
 @pytest.fixture
-def sample_user(db_session: Session) -> Dict:
-    user = models.User(
-        name="Sample User",
-        email="sample@example.com",
-        password_hash="hash",
-        is_active=True,
-        created_at=_now_iso(),
-    )
-    db_session.add(user)
-    db_session.commit()
-    db_session.refresh(user)
+def sample_user(default_user: models.User) -> Dict:
+    """Return the default user as sample user to avoid auth conflicts."""
     return {
-        "id": user.id,
-        "name": user.name,
-        "email": user.email,
-        "password_hash": user.password_hash,
+        "id": default_user.id,
+        "name": default_user.name,
+        "email": default_user.email,
+        "password_hash": default_user.password_hash,
     }
 
 
@@ -382,4 +373,28 @@ def large_task_dataset(db_session: Session, sample_user: Dict) -> List[Dict]:
         )
         tasks.append(_task_to_dict(task))
     return tasks
+
+
+@pytest.fixture(scope="function")
+def test_db():
+    """Provide a raw SQLite connection for database constraint tests."""
+    import sqlite3
+    from pathlib import Path
+    
+    # Create in-memory database with same schema
+    conn = sqlite3.connect(":memory:")
+    conn.execute("PRAGMA foreign_keys = ON")
+    
+    # Read and execute schema
+    schema_path = Path(__file__).parent.parent / "schema.sql"
+    if schema_path.exists():
+        with open(schema_path, 'r') as f:
+            schema_sql = f.read()
+            conn.executescript(schema_sql)
+    else:
+        # Fallback: create tables using SQLAlchemy models
+        Base.metadata.create_all(bind=create_engine("sqlite://", creator=lambda: conn))
+    
+    yield conn
+    conn.close()
 
