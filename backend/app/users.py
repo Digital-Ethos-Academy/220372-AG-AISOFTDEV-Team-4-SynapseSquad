@@ -3,9 +3,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import List
 from datetime import timedelta
 from sqlalchemy.orm import Session
-import schemas, crud
-from database import get_db
-from auth import (
+from app import schemas, crud
+from app.database import get_db
+from app.auth import (
     authenticate_user, 
     create_access_token, 
     create_user, 
@@ -98,7 +98,7 @@ def delete_user(user_id: int, db: Session = Depends(get_db), current_user: schem
 @router.put("/auth/change-password")
 def change_password(password_change: schemas.PasswordChange, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_active_user)):
     """Change user password with current password verification."""
-    from auth import verify_password, get_password_hash
+    from app.auth import verify_password, get_password_hash
     
     # Get the current user from database to get the stored password hash
     db_user = crud.get_user(db, current_user.id)
@@ -126,7 +126,7 @@ def change_password(password_change: schemas.PasswordChange, db: Session = Depen
 @router.put("/auth/profile", response_model=schemas.User)
 def update_profile(profile_update: schemas.UserProfileUpdate, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_active_user)):
     """Update user profile (name and email only)."""
-    from auth import get_user_by_email
+    from app.auth import get_user_by_email
     
     # Get the current user from database
     db_user = crud.get_user(db, current_user.id)

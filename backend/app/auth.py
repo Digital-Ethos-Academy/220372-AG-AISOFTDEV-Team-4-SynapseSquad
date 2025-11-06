@@ -6,9 +6,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-import schemas
-import models
-from database import get_db
+from app import schemas
+from app import models
+from app.database import get_db
 import hashlib
 
 # Configuration

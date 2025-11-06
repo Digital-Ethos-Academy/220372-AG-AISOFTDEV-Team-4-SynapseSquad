@@ -1,8 +1,13 @@
-from pydantic import BaseModel, Field, validator
-from typing import Optional, List
+from __future__ import annotations
+
 from datetime import datetime
+from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, validator
 
 class TaskBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     title: str
     description: Optional[str] = None
     deadline: Optional[datetime] = None
@@ -100,12 +105,24 @@ class TaskUpdate(BaseModel):
             return int(v)
         return v
 
-class Task(TaskBase):
+class TaskResponse(TaskBase):
     id: int
+    user_id: int
     priority_score: Optional[int] = None
     tshirt_size: Optional[str] = None
-    class Config:
-        orm_mode = True
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+class TaskPriorityDetail(BaseModel):
+    task_id: int
+    score: int
+
+
+class TaskTShirtDetail(BaseModel):
+    task_id: int
+    tshirt_size: str
+    rationale: Optional[str] = None
 
 class AIRankRequestTask(BaseModel):
     title: str
