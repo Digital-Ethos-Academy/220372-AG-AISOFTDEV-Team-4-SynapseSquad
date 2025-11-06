@@ -12,11 +12,9 @@ from app.database import get_db
 import hashlib
 
 # Configuration
-SECRET_KEY = os.getenv("SECRET_KEY")
-if not SECRET_KEY:
-    raise RuntimeError(
-        "SECRET_KEY environment variable is required; set it before starting the backend."
-    )
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-for-course-project-change-in-production")
+if SECRET_KEY == "dev-secret-key-for-course-project-change-in-production":
+    print("WARNING: Using default SECRET_KEY. Set SECRET_KEY environment variable for production!")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

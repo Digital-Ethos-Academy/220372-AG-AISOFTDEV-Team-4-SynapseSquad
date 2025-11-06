@@ -10,7 +10,10 @@ Copy this section to create your `.env` file in the project root:
 
 ```env
 # Docker Environment Variables
-# All values have defaults, so .env is optional
+# All values have defaults, .env is optional for development
+
+# Backend Security (Optional for dev, REQUIRED for production)
+# SECRET_KEY=your-secret-key-here-change-this
 
 # Backend
 BACKEND_PORT=8000
@@ -25,13 +28,16 @@ COMPOSE_PROJECT_NAME=synapseSquad
 
 **Quick Setup:**
 ```bash
-# Create .env file (optional - defaults work without it)
-# Copy the values above into a new .env file in project root
+# Optional: Generate a secure SECRET_KEY for production
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+
+# For development, .env file is optional - all values have defaults
 ```
 
 **Notes:**
 - Docker Compose automatically loads `.env` from the root directory
-- All values have defaults (defined in docker-compose.yml), so `.env` is optional
+- All values have defaults - **.env is optional for development**
+- **SECRET_KEY**: Has a default dev value; set custom value for production
 - Change ports if 3000 or 8000 are already in use
 - After changing values, run: `.\docker-rebuild.ps1`
 
@@ -39,6 +45,10 @@ COMPOSE_PROJECT_NAME=synapseSquad
 
 ### Backend .env (place in `/backend/` folder)
 ```env
+# Optional for dev - has default value
+# For production: python -c "import secrets; print(secrets.token_urlsafe(32))"
+# SECRET_KEY=your-secret-key-here-change-this
+
 BACKEND_PORT=8000
 FRONT_END_URL=http://localhost:3000
 ```
@@ -54,6 +64,7 @@ REACT_APP_BACK_END_URL=http://localhost:8000
 
 | Variable | Default | Purpose | Used By |
 |----------|---------|---------|---------|
+| `SECRET_KEY` | dev-secret-key... | Cryptographic key for JWT signing (change for production) | Backend |
 | `BACKEND_PORT` | 8000 | Port for FastAPI server | Backend |
 | `BACK_END_URL` | http://localhost:8000 | Backend API URL | Frontend (build time) |
 | `FRONT_END_URL` | http://localhost:3000 | Frontend URL for CORS | Backend |
@@ -62,10 +73,27 @@ REACT_APP_BACK_END_URL=http://localhost:8000
 
 ## Production Notes
 
-For production deployment, update URLs to actual domain names:
+For production deployment:
 
+**1. Generate a strong SECRET_KEY:**
+```bash
+# Generate a cryptographically secure key (DO NOT use the example below)
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+**2. Update URLs to actual domain names:**
 ```env
+# CRITICAL: Use a unique, randomly generated key for each environment
+SECRET_KEY=<output-from-command-above>
+
 BACKEND_PORT=8000
 BACK_END_URL=https://api.yourcompany.com
 FRONT_END_URL=https://app.yourcompany.com
 ```
+
+**Security Best Practices:**
+- Generate a **different** SECRET_KEY for each environment (dev/staging/production)
+- **Never commit** SECRET_KEY to version control
+- Minimum 32 characters, use cryptographically random values
+- Store in secure secrets management system (Azure Key Vault, AWS Secrets Manager, etc.)
+- Rotate keys periodically (invalidates existing JWT tokens)
