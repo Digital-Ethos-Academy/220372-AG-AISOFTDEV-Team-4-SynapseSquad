@@ -1,0 +1,184 @@
+/**
+ * Alternative theme variants for SynapseSquad
+ * These can be applied by adding data attributes to the root element
+ */
+
+/* Ocean Theme - Inspired by deep sea colors */
+[data-theme="ocean"] {
+  --background: 203 23% 97%;
+  --foreground: 203 75% 6%;
+  --card: 203 23% 97%;
+  --card-foreground: 203 75% 6%;
+  --popover: 203 23% 97%;
+  --popover-foreground: 203 75% 6%;
+  --primary: 203 89% 20%;
+  --primary-foreground: 203 23% 97%;
+  --secondary: 203 15% 92%;
+  --secondary-foreground: 203 75% 6%;
+  --muted: 203 15% 92%;
+  --muted-foreground: 203 32% 45%;
+  --accent: 198 88% 48%;
+  --accent-foreground: 203 23% 97%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 203 25% 85%;
+  --input: 203 25% 85%;
+  --ring: 203 89% 20%;
+}
+
+[data-theme="ocean"].dark {
+  --background: 203 75% 4%;
+  --foreground: 203 23% 95%;
+  --card: 203 65% 6%;
+  --card-foreground: 203 23% 95%;
+  --popover: 203 65% 6%;
+  --popover-foreground: 203 23% 95%;
+  --primary: 198 88% 48%;
+  --primary-foreground: 203 75% 4%;
+  --secondary: 203 45% 12%;
+  --secondary-foreground: 203 23% 95%;
+  --muted: 203 45% 12%;
+  --muted-foreground: 203 32% 65%;
+  --accent: 198 88% 48%;
+  --accent-foreground: 203 75% 4%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 203 45% 12%;
+  --input: 203 45% 12%;
+  --ring: 198 88% 48%;
+}
+
+/* Forest Theme - Inspired by nature and growth */
+[data-theme="forest"] {
+  --background: 120 15% 97%;
+  --foreground: 120 30% 8%;
+  --card: 120 15% 97%;
+  --card-foreground: 120 30% 8%;
+  --popover: 120 15% 97%;
+  --popover-foreground: 120 30% 8%;
+  --primary: 120 40% 25%;
+  --primary-foreground: 120 15% 97%;
+  --secondary: 120 10% 90%;
+  --secondary-foreground: 120 30% 8%;
+  --muted: 120 10% 90%;
+  --muted-foreground: 120 20% 45%;
+  --accent: 142 76% 36%;
+  --accent-foreground: 120 15% 97%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 120 15% 82%;
+  --input: 120 15% 82%;
+  --ring: 120 40% 25%;
+}
+
+[data-theme="forest"].dark {
+  --background: 120 30% 5%;
+  --foreground: 120 15% 95%;
+  --card: 120 25% 7%;
+  --card-foreground: 120 15% 95%;
+  --popover: 120 25% 7%;
+  --popover-foreground: 120 15% 95%;
+  --primary: 142 76% 36%;
+  --primary-foreground: 120 30% 5%;
+  --secondary: 120 20% 12%;
+  --secondary-foreground: 120 15% 95%;
+  --muted: 120 20% 12%;
+  --muted-foreground: 120 15% 65%;
+  --accent: 142 76% 36%;
+  --accent-foreground: 120 30% 5%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 120 20% 12%;
+  --input: 120 20% 12%;
+  --ring: 142 76% 36%;
+}
+
+/* Sunset Theme - Warm, energetic colors */
+[data-theme="sunset"] {
+  --background: 35 25% 97%;
+  --foreground: 25 45% 8%;
+  --card: 35 25% 97%;
+  --card-foreground: 25 45% 8%;
+  --popover: 35 25% 97%;
+  --popover-foreground: 25 45% 8%;
+  --primary: 25 45% 25%;
+  --primary-foreground: 35 25% 97%;
+  --secondary: 35 15% 90%;
+  --secondary-foreground: 25 45% 8%;
+  --muted: 35 15% 90%;
+  --muted-foreground: 25 25% 45%;
+  --accent: 15 86% 55%;
+  --accent-foreground: 35 25% 97%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 35 20% 82%;
+  --input: 35 20% 82%;
+  --ring: 25 45% 25%;
+}
+
+[data-theme="sunset"].dark {
+  --background: 25 45% 4%;
+  --foreground: 35 25% 95%;
+  --card: 25 35% 6%;
+  --card-foreground: 35 25% 95%;
+  --popover: 25 35% 6%;
+  --popover-foreground: 35 25% 95%;
+  --primary: 15 86% 55%;
+  --primary-foreground: 25 45% 4%;
+  --secondary: 25 25% 12%;
+  --secondary-foreground: 35 25% 95%;
+  --muted: 25 25% 12%;
+  --muted-foreground: 35 15% 65%;
+  --accent: 15 86% 55%;
+  --accent-foreground: 25 45% 4%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 25 25% 12%;
+  --input: 25 25% 12%;
+  --ring: 15 86% 55%;
+}
+
+/* Purple Theme - Creative and modern */
+[data-theme="purple"] {
+  --background: 270 15% 97%;
+  --foreground: 270 45% 8%;
+  --card: 270 15% 97%;
+  --card-foreground: 270 45% 8%;
+  --popover: 270 15% 97%;
+  --popover-foreground: 270 45% 8%;
+  --primary: 270 45% 25%;
+  --primary-foreground: 270 15% 97%;
+  --secondary: 270 10% 90%;
+  --secondary-foreground: 270 45% 8%;
+  --muted: 270 10% 90%;
+  --muted-foreground: 270 25% 45%;
+  --accent: 262 83% 58%;
+  --accent-foreground: 270 15% 97%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 270 15% 82%;
+  --input: 270 15% 82%;
+  --ring: 270 45% 25%;
+}
+
+[data-theme="purple"].dark {
+  --background: 270 45% 4%;
+  --foreground: 270 15% 95%;
+  --card: 270 35% 6%;
+  --card-foreground: 270 15% 95%;
+  --popover: 270 35% 6%;
+  --popover-foreground: 270 15% 95%;
+  --primary: 262 83% 58%;
+  --primary-foreground: 270 45% 4%;
+  --secondary: 270 25% 12%;
+  --secondary-foreground: 270 15% 95%;
+  --muted: 270 25% 12%;
+  --muted-foreground: 270 15% 65%;
+  --accent: 262 83% 58%;
+  --accent-foreground: 270 45% 4%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 270 25% 12%;
+  --input: 270 25% 12%;
+  --ring: 262 83% 58%;
+}
