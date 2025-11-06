@@ -54,20 +54,37 @@ git pull origin master
 
 See [ENV_FORMAT.md](ENV_FORMAT.md) for complete environment variable documentation.
 
-**Quick Setup:**
+### Quick Setup
 
-Backend `.env` (create in `/backend/` folder):
+**Backend `.env` (create in `/backend/` folder):**
 ```env
+# Optional for development - has default value
+# For production, generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
+SECRET_KEY=dev-secret-key-for-course-project
+
 BACKEND_PORT=8000
 FRONT_END_URL=http://localhost:3000
 ```
 
-Frontend `.env` (create in `/frontend/` folder):
+**Frontend `.env` (create in `/frontend/` folder):**
 ```env
 REACT_APP_BACK_END_URL=http://localhost:8000
 ```
 
-**Note:** If you add new variables, update `ENV_FORMAT.md` to maintain single source of truth.
+### Important Notes
+
+**SECRET_KEY:**
+- **Development**: Optional - app has a safe default if not set
+- **Production**: **REQUIRED** - generate a unique, cryptographically secure key
+- **Generate secure key**: 
+  ```bash
+  python -c "import secrets; print(secrets.token_urlsafe(32))"
+  ```
+- See [ENV_FORMAT.md](ENV_FORMAT.md) for detailed SECRET_KEY documentation
+
+**General:**
+- If you add new variables, update `ENV_FORMAT.md` to maintain single source of truth
+- `.env` files are in `.gitignore` and should never be committed
 
 ---
 
@@ -89,14 +106,24 @@ Install dependencies:
 pip install -r ../requirements.txt
 ```
 
-(If `requirements.txt` lives at root, the above relative path is correct.)
+*If `requirements.txt` lives at root, the above relative path is correct.*
 
-Run the backend (via Python entrypoint that internally starts uvicorn and reads `BACKEND_PORT` with fallback 8000):
+**Run the backend:**
 ```powershell
-# Optional: override default port
+# Default (works without .env file)
+python .\main.py
+
+# Or with custom port
 $env:BACKEND_PORT=8010
 python .\main.py
 ```
+
+**Note:** The backend will start successfully without a `.env` file. It uses sensible defaults:
+- `SECRET_KEY`: Has a safe default for development (warning displayed)
+- `BACKEND_PORT`: Defaults to 8000
+- `FRONT_END_URL`: Defaults to `http://localhost:3000`
+
+For production, always set a custom `SECRET_KEY`.
 
 Test in browser or curl:
 ```powershell
