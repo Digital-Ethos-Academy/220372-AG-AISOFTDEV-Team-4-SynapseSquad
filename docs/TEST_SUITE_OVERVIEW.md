@@ -427,7 +427,7 @@ POST   /ai/rank            - Rank tasks by priority
 POST   /ai/size            - T-shirt size recommendation
 
 GET    /users/{id}/tasks   - Get user's tasks
-POST   /tasks/dependencies - Create task dependency
+POST   /tasks_dependencies - Create task dependency
 GET    /tasks/{id}/dependencies - Get task dependencies
 ```
 

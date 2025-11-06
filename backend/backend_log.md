@@ -218,9 +218,9 @@ GET    /auth/me
 - `DELETE /users/{user_id}` - Delete user
 
 ### Task Dependencies
-- `GET /tasks/dependencies` - List all dependencies
-- `POST /tasks/dependencies` - Create dependency
-- `DELETE /tasks/dependencies/{dep_id}` - Delete dependency
+- `GET /tasks_dependencies` - List all dependencies
+- `POST /tasks_dependencies` - Create dependency
+- `DELETE /tasks_dependencies/{dep_id}` - Delete dependency
 
 ### Priority Scores
 - `GET /task_priority_scores` - List all priority scores

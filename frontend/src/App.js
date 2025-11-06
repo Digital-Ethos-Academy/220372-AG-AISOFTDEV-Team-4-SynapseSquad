@@ -189,6 +189,7 @@ function MainApp() {
             <div className="flex-1 lg:sticky lg:top-0 lg:self-start lg:h-[calc(100vh-8rem)]">
               <TaskDetailsPanel 
                 task={selectedTask}
+                allTasks={tasks}
                 onUpdateTask={handleUpdateTask}
                 onDeleteTask={handleDeleteTask}
               />

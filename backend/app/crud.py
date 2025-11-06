@@ -178,11 +178,35 @@ def get_task_dependencies(db: Session) -> List[models.TaskDependency]:
     return db.query(models.TaskDependency).all()
 
 
+def get_task_dependencies_for_task(db: Session, task_id: int) -> List[models.TaskDependency]:
+    """Get all dependencies related to a specific task (both dependencies and dependents)"""
+    return db.query(models.TaskDependency).filter(
+        (models.TaskDependency.task_id == task_id) | 
+        (models.TaskDependency.depends_on_task_id == task_id)
+    ).all()
+
+
 def create_task_dependency(db: Session, dep: schemas.TaskDependencyCreate) -> models.TaskDependency:
+    # Prevent self-dependency
+    if dep.task_id == dep.depends_on_task_id:
+        raise ValueError("Task cannot depend on itself")
+
+    # Check for existing duplicate
+    existing = db.query(models.TaskDependency).filter(
+        models.TaskDependency.task_id == dep.task_id,
+        models.TaskDependency.depends_on_task_id == dep.depends_on_task_id
+    ).first()
+    if existing:
+        raise ValueError("Dependency already exists")
+
     data = dep.dict()
     db_dep = models.TaskDependency(**data)
     db.add(db_dep)
-    db.commit()
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
     db.refresh(db_dep)
     return db_dep
 

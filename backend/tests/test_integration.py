@@ -128,7 +128,7 @@ class TestTaskDependencies:
             "depends_on_task_id": sample_tasks[1]['id']
         }
         
-        response = client.post("/api/tasks/dependencies", json=dependency_data)
+        response = client.post("/api/tasks_dependencies", json=dependency_data)
         assert response.status_code in [200, 201]
     
     def test_get_task_dependencies(self, client, sample_tasks):
@@ -141,7 +141,7 @@ class TestTaskDependencies:
             "task_id": sample_tasks[0]['id'],
             "depends_on_task_id": sample_tasks[1]['id']
         }
-        client.post("/api/tasks/dependencies", json=dependency_data)
+        client.post("/api/tasks_dependencies", json=dependency_data)
         
         # Get dependencies for task
         response = client.get(f"/api/tasks/{sample_tasks[0]['id']}/dependencies")
@@ -159,7 +159,7 @@ class TestTaskDependencies:
             "task_id": sample_tasks[0]['id'],
             "depends_on_task_id": sample_tasks[1]['id']
         }
-        response1 = client.post("/api/tasks/dependencies", json=dep1)
+        response1 = client.post("/api/tasks_dependencies", json=dep1)
         assert response1.status_code in [200, 201]
         
         # Try to create circular dependency: task[1] depends on task[0]
@@ -167,7 +167,7 @@ class TestTaskDependencies:
             "task_id": sample_tasks[1]['id'],
             "depends_on_task_id": sample_tasks[0]['id']
         }
-        response2 = client.post("/api/tasks/dependencies", json=dep2)
+        response2 = client.post("/api/tasks_dependencies", json=dep2)
         # Should either reject or handle gracefully
         assert response2.status_code in [200, 201, 400, 422]
     
@@ -181,7 +181,7 @@ class TestTaskDependencies:
             "task_id": sample_tasks[0]['id'],
             "depends_on_task_id": sample_tasks[1]['id']
         }
-        client.post("/api/tasks/dependencies", json=dependency_data)
+        client.post("/api/tasks_dependencies", json=dependency_data)
         
         # Delete the dependent task
         delete_response = client.delete(f"/api/tasks/{sample_tasks[0]['id']}")
@@ -201,7 +201,7 @@ class TestTaskDependencies:
             "task_id": sample_tasks[0]['id'],
             "depends_on_task_id": sample_tasks[1]['id']
         }
-        client.post("/api/tasks/dependencies", json=dependency_data)
+        client.post("/api/tasks_dependencies", json=dependency_data)
         
         # Mark dependent task as blocked
         update_data = {"status": "blocked"}
@@ -550,7 +550,7 @@ class TestErrorHandlingIntegration:
             "depends_on_task_id": 99999  # Non-existent task
         }
         
-        response = client.post("/api/tasks/dependencies", json=dependency_data)
+        response = client.post("/api/tasks_dependencies", json=dependency_data)
         assert response.status_code in [400, 404, 422]
     
     def test_concurrent_task_updates(self, client, sample_tasks):

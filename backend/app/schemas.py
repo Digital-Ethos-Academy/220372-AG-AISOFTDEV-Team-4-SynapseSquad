@@ -242,6 +242,7 @@ class TaskDependency(BaseModel):
     id: int
     task_id: int
     depends_on_task_id: int
+    
     class Config:
         orm_mode = True
 

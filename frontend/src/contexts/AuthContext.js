@@ -29,10 +29,16 @@ export const AuthProvider = ({ children }) => {
       headers.Authorization = `Bearer ${token}`;
     }
 
+    console.log('Making API call to:', url);
+    console.log('Headers:', headers);
+    console.log('Token present:', !!token);
+
     const response = await fetch(url, {
       ...options,
       headers,
     });
+
+    console.log('Response status:', response.status);
 
     if (response.status === 401) {
       // Token expired or invalid

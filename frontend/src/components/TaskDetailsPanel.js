@@ -8,8 +8,9 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
+import { TaskDependencyGraph } from './TaskDependencyGraph';
 
-export function TaskDetailsPanel({ task, onUpdateTask, onDeleteTask }) {
+export function TaskDetailsPanel({ task, allTasks = [], onUpdateTask, onDeleteTask }) {
   const [editedTask, setEditedTask] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -275,6 +276,14 @@ export function TaskDetailsPanel({ task, onUpdateTask, onDeleteTask }) {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Task Dependencies Section */}
+            <div className="border-t border-slate-200 pt-6">
+              <TaskDependencyGraph 
+                currentTaskId={task.id}
+                allTasks={allTasks}
+              />
             </div>
           </>
         )}
