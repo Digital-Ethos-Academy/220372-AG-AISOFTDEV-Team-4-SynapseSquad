@@ -1,15 +1,14 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from sqlalchemy.orm import Session
-from app import schemas, crud
+from app import schemas, crud, models
 from app.database import get_db
 from app.auth import get_current_active_user
-from app import models
 
-router = APIRouter()
+router = APIRouter(prefix="/api", tags=["tasks"])
 
 
-@router.get("/tasks", response_model=List[schemas.Task])
+@router.get("/tasks", response_model=List[schemas.TaskResponse])
 def get_tasks(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
     # Filter tasks by current user
     db_tasks = crud.get_tasks_by_user(db, current_user.id)
@@ -33,19 +32,22 @@ def get_tasks(db: Session = Depends(get_db), current_user: models.User = Depends
 
         results.append({
             "id": t.id,
+            "user_id": t.user_id,
             "title": t.title,
             "description": t.description,
             "deadline": t.deadline,
-            "estimated_duration": t.estimated_duration or 0,
+            "estimated_duration": t.estimated_duration,
             "status": t.status,
-            "priority_score": score or 0,
+            "created_at": t.created_at,
+            "updated_at": t.updated_at,
+            "priority_score": score,
             "tshirt_size": tshirt,
         })
 
     return results
 
 
-@router.get("/tasks/{task_id}", response_model=schemas.Task)
+@router.get("/tasks/{task_id}", response_model=schemas.TaskResponse)
 def get_task(task_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
     t = crud.get_task(db, task_id)
     if not t:
@@ -71,17 +73,20 @@ def get_task(task_id: int, db: Session = Depends(get_db), current_user: models.U
 
     return {
         "id": t.id,
+        "user_id": t.user_id,
         "title": t.title,
         "description": t.description,
         "deadline": t.deadline,
-        "estimated_duration": t.estimated_duration or 0,
+        "estimated_duration": t.estimated_duration,
         "status": t.status,
-        "priority_score": score or 0,
+        "created_at": t.created_at,
+        "updated_at": t.updated_at,
+        "priority_score": score,
         "tshirt_size": tshirt,
     }
 
 
-@router.post("/tasks", response_model=schemas.Task)
+@router.post("/tasks", response_model=schemas.TaskResponse, status_code=201)
 def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
     try:
         # Override user_id with current user's id
@@ -105,19 +110,22 @@ def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db), current
 
         return {
             "id": db_task.id,
+            "user_id": db_task.user_id,
             "title": db_task.title,
             "description": db_task.description,
             "deadline": db_task.deadline,
-            "estimated_duration": db_task.estimated_duration or 0,
+            "estimated_duration": db_task.estimated_duration,
             "status": db_task.status,
-            "priority_score": score or 0,
+            "created_at": db_task.created_at,
+            "updated_at": db_task.updated_at,
+            "priority_score": score,
             "tshirt_size": tshirt,
         }
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
 
 
-@router.put("/tasks/{task_id}", response_model=schemas.Task)
+@router.put("/tasks/{task_id}", response_model=schemas.TaskResponse)
 def update_task(task_id: int, task: schemas.TaskUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
     # Check if task exists and belongs to current user
     existing_task = crud.get_task(db, task_id)
@@ -147,17 +155,20 @@ def update_task(task_id: int, task: schemas.TaskUpdate, db: Session = Depends(ge
 
     return {
         "id": updated.id,
+        "user_id": updated.user_id,
         "title": updated.title,
         "description": updated.description,
         "deadline": updated.deadline,
-        "estimated_duration": updated.estimated_duration or 0,
+        "estimated_duration": updated.estimated_duration,
         "status": updated.status,
-        "priority_score": score or 0,
+        "created_at": updated.created_at,
+        "updated_at": updated.updated_at,
+        "priority_score": score,
         "tshirt_size": tshirt,
     }
 
 
-@router.delete("/tasks/{task_id}")
+@router.delete("/tasks/{task_id}", status_code=204)
 def delete_task(task_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
     # Check if task exists and belongs to current user
     existing_task = crud.get_task(db, task_id)
@@ -168,4 +179,4 @@ def delete_task(task_id: int, db: Session = Depends(get_db), current_user: model
     
     if not crud.delete_task(db, task_id):
         raise HTTPException(status_code=404, detail="Task not found")
-    return {"ok": True}
+    return None

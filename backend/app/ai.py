@@ -4,7 +4,7 @@ from app import schemas, models
 from app.database import get_db
 from datetime import datetime
 
-router = APIRouter()
+router = APIRouter(prefix="/api", tags=["ai"])
 
 
 def _compute_score(deadline: datetime | None, estimated_duration: int | None) -> int:

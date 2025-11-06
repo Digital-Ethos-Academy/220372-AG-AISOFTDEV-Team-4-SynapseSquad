@@ -135,8 +135,19 @@ def get_user(db: Session, user_id: int) -> Optional[models.User]:
 
 
 def create_user(db: Session, user: schemas.UserCreate) -> models.User:
+    """Create a user with proper password hashing.
+    
+    Note: For production use, consider using app.auth.create_user instead,
+    which includes duplicate email checking.
+    """
+    from app.auth import get_password_hash
+    
     data = user.dict()
-    db_user = models.User(**data)
+    # Hash the password before storing
+    password = data.pop('password')
+    password_hash = get_password_hash(password)
+    
+    db_user = models.User(**data, password_hash=password_hash)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
