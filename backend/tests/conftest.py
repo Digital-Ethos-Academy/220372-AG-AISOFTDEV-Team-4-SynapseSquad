@@ -19,8 +19,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-os.environ.setdefault("SECRET_KEY", "test-secret-key")
-
 from app.main import app
 from app.database import Base, get_db
 from app.auth import get_current_active_user
