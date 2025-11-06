@@ -10,7 +10,7 @@ import { Slider } from './ui/slider';
 import { Badge } from './ui/badge';
 import { TaskDependencyGraph } from './TaskDependencyGraph';
 
-export function TaskDetailsPanel({ task, allTasks = [], onUpdateTask, onDeleteTask }) {
+export function TaskDetailsPanel({ task, allTasks = [], onUpdateTask, onDeleteTask, onSelectTask }) {
   const [editedTask, setEditedTask] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -283,6 +283,7 @@ export function TaskDetailsPanel({ task, allTasks = [], onUpdateTask, onDeleteTa
               <TaskDependencyGraph 
                 currentTaskId={task.id}
                 allTasks={allTasks}
+                onSelectTask={onSelectTask}
               />
             </div>
           </>

@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from './ui/badge';
 import { useAuth } from '../contexts/AuthContext';
 
-export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
+export function TaskDependencyGraph({ currentTaskId, allTasks = [], onSelectTask }) {
   const { apiCall } = useAuth();
   const [dependencies, setDependencies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -199,7 +199,10 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
               const dependencyTask = getTaskById(dep.depends_on_task_id);
               return (
                 <div key={dep.id} className="flex items-center justify-between p-4 border border-emerald-200 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 shadow-sm hover:shadow-md transition-shadow duration-200">
-                  <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => onSelectTask && onSelectTask(dependencyTask)}
+                    className="flex items-center gap-3 flex-1 text-left hover:bg-emerald-100 rounded-lg p-2 -m-2 transition-colors duration-200"
+                  >
                     <ArrowRight className="w-5 h-5 text-emerald-600" />
                     <div>
                       <p className="font-semibold text-slate-900">{dependencyTask.title}</p>
@@ -216,7 +219,7 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
                         </Badge>
                       </div>
                     </div>
-                  </div>
+                  </button>
                   <Button
                     onClick={() => handleDeleteDependency(currentTaskId, dep.depends_on_task_id)}
                     variant="ghost"
@@ -244,7 +247,10 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
               const dependentTask = getTaskById(dep.task_id);
               return (
                 <div key={dep.id} className="flex items-center justify-between p-4 border border-violet-200 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50 shadow-sm hover:shadow-md transition-shadow duration-200">
-                  <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => onSelectTask && onSelectTask(dependentTask)}
+                    className="flex items-center gap-3 flex-1 text-left hover:bg-violet-100 rounded-lg p-2 -m-2 transition-colors duration-200"
+                  >
                     <ArrowRight className="w-5 h-5 text-violet-600 rotate-180" />
                     <div>
                       <p className="font-semibold text-slate-900">{dependentTask.title}</p>
@@ -261,7 +267,7 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
                         </Badge>
                       </div>
                     </div>
-                  </div>
+                  </button>
                   <Button
                     onClick={() => handleDeleteDependency(dep.task_id, currentTaskId)}
                     variant="ghost"
