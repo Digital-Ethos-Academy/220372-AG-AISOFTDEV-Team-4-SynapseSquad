@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  const API_BASE_URL = process.env.REACT_APP_BACK_END_URL;
+  const API_BASE_URL = process.env.REACT_APP_BACK_END_URL + '/api';
 
   // Function to make authenticated API calls
   const apiCall = async (endpoint, options = {}) => {
