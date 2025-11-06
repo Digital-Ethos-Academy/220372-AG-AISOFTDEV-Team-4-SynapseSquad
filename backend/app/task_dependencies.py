@@ -38,3 +38,26 @@ def create_dep(dep: schemas.TaskDependencyCreate, db: Session = Depends(get_db),
     except Exception as e:
         # Unexpected database errors
         raise HTTPException(status_code=500, detail="Failed to create dependency") from e
+
+
+@router.delete("/tasks_dependencies/{dep_id}")
+def delete_dep_by_id(dep_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
+    """Delete a task dependency by its ID."""
+    success = crud.delete_task_dependency(db, dep_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Dependency not found")
+    return {"message": "Dependency deleted successfully"}
+
+
+@router.delete("/tasks_dependencies")
+def delete_dep_by_tasks(
+    task_id: int = Query(..., description="ID of the task that has the dependency"),
+    depends_on_task_id: int = Query(..., description="ID of the task that is depended on"),
+    db: Session = Depends(get_db), 
+    current_user: models.User = Depends(get_current_active_user)
+):
+    """Delete a task dependency by task IDs."""
+    success = crud.delete_task_dependency_by_tasks(db, task_id, depends_on_task_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Dependency not found")
+    return {"message": "Dependency deleted successfully"}

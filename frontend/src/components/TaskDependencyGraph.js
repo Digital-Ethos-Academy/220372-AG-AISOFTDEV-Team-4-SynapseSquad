@@ -73,9 +73,9 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
   };
 
   // Delete a dependency
-  const handleDeleteDependency = async (depId) => {
+  const handleDeleteDependency = async (taskId, dependsOnTaskId) => {
     try {
-  const response = await apiCall(`/tasks_dependencies/${depId}`, {
+      const response = await apiCall(`/tasks_dependencies?task_id=${taskId}&depends_on_task_id=${dependsOnTaskId}`, {
         method: 'DELETE',
       });
 
@@ -114,9 +114,10 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
 
   if (!currentTaskId) {
     return (
-      <div className="text-center text-slate-400 py-8">
-        <GitBranch className="w-8 h-8 mx-auto mb-2 opacity-50" />
-        <p>No task selected</p>
+      <div className="text-center text-slate-500 py-8">
+        <GitBranch className="w-10 h-10 mx-auto mb-3 opacity-40 text-indigo-300" />
+        <p className="font-medium">No task selected</p>
+        <p className="text-sm text-slate-400">Select a task to view its dependencies</p>
       </div>
     );
   }
@@ -125,9 +126,11 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <GitBranch className="w-5 h-5 text-slate-600" />
-          <Label className="text-lg font-medium">Task Dependencies</Label>
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-lg">
+            <GitBranch className="w-5 h-5 text-indigo-600" />
+          </div>
+          <Label className="text-lg font-semibold text-slate-800">Task Dependencies</Label>
         </div>
         <Button
           onClick={() => setIsAddingDependency(true)}
@@ -148,8 +151,8 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
 
       {/* Add Dependency Form */}
       {isAddingDependency && (
-        <div className="border border-slate-200 rounded-lg p-4 space-y-4 bg-slate-50">
-          <Label>This task depends on:</Label>
+        <div className="border border-indigo-200 rounded-lg p-4 space-y-4 bg-gradient-to-r from-indigo-50 to-purple-50">
+          <Label className="text-indigo-800 font-medium">This task depends on:</Label>
           <div className="flex gap-2">
             <Select value={selectedTaskId} onValueChange={setSelectedTaskId}>
               <SelectTrigger className="flex-1">
@@ -187,16 +190,19 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
       {/* Dependencies This Task Has */}
       {dependsOn.length > 0 && (
         <div className="space-y-3">
-          <Label className="text-sm font-medium text-slate-700">This task depends on:</Label>
+          <Label className="text-sm font-medium text-slate-800 flex items-center gap-2">
+            <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"></div>
+            This task depends on:
+          </Label>
           <div className="space-y-2">
             {dependsOn.map(dep => {
               const dependencyTask = getTaskById(dep.depends_on_task_id);
               return (
-                <div key={dep.id} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-blue-50">
+                <div key={dep.id} className="flex items-center justify-between p-4 border border-emerald-200 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="flex items-center gap-3">
-                    <ArrowRight className="w-4 h-4 text-blue-600" />
+                    <ArrowRight className="w-5 h-5 text-emerald-600" />
                     <div>
-                      <p className="font-medium text-slate-900">{dependencyTask.title}</p>
+                      <p className="font-semibold text-slate-900">{dependencyTask.title}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge 
                           variant={
@@ -212,10 +218,10 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
                     </div>
                   </div>
                   <Button
-                    onClick={() => handleDeleteDependency(dep.id)}
+                    onClick={() => handleDeleteDependency(currentTaskId, dep.depends_on_task_id)}
                     variant="ghost"
                     size="sm"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="text-rose-600 hover:text-rose-700 hover:bg-rose-100 transition-colors duration-200"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -229,16 +235,19 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
       {/* Tasks That Depend On This Task */}
       {dependents.length > 0 && (
         <div className="space-y-3">
-          <Label className="text-sm font-medium text-slate-700">Tasks that depend on this one:</Label>
+          <Label className="text-sm font-medium text-slate-800 flex items-center gap-2">
+            <div className="w-3 h-3 bg-gradient-to-r from-violet-400 to-purple-500 rounded-full"></div>
+            Tasks that depend on this one:
+          </Label>
           <div className="space-y-2">
             {dependents.map(dep => {
               const dependentTask = getTaskById(dep.task_id);
               return (
-                <div key={dep.id} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-amber-50">
+                <div key={dep.id} className="flex items-center justify-between p-4 border border-violet-200 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="flex items-center gap-3">
-                    <ArrowRight className="w-4 h-4 text-amber-600 rotate-180" />
+                    <ArrowRight className="w-5 h-5 text-violet-600 rotate-180" />
                     <div>
-                      <p className="font-medium text-slate-900">{dependentTask.title}</p>
+                      <p className="font-semibold text-slate-900">{dependentTask.title}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge 
                           variant={
@@ -254,10 +263,10 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
                     </div>
                   </div>
                   <Button
-                    onClick={() => handleDeleteDependency(dep.id)}
+                    onClick={() => handleDeleteDependency(dep.task_id, currentTaskId)}
                     variant="ghost"
                     size="sm"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="text-rose-600 hover:text-rose-700 hover:bg-rose-100 transition-colors duration-200"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -270,10 +279,10 @@ export function TaskDependencyGraph({ currentTaskId, allTasks = [] }) {
 
       {/* Empty State */}
       {!isLoading && dependencies.length === 0 && (
-        <div className="text-center py-8 text-slate-400">
-          <GitBranch className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p>No dependencies found</p>
-          <p className="text-sm">Add dependencies to track task relationships</p>
+        <div className="text-center py-8 text-slate-500">
+          <GitBranch className="w-12 h-12 mx-auto mb-3 opacity-40 text-indigo-300" />
+          <p className="font-medium text-slate-700">No dependencies found</p>
+          <p className="text-sm text-slate-500">Add dependencies to track task relationships</p>
         </div>
       )}
     </div>
