@@ -220,6 +220,19 @@ def delete_task_dependency(db: Session, dep_id: int) -> bool:
     return True
 
 
+def delete_task_dependency_by_tasks(db: Session, task_id: int, depends_on_task_id: int) -> bool:
+    """Delete a task dependency by task_id and depends_on_task_id."""
+    db_dep = db.query(models.TaskDependency).filter(
+        models.TaskDependency.task_id == task_id,
+        models.TaskDependency.depends_on_task_id == depends_on_task_id
+    ).first()
+    if not db_dep:
+        return False
+    db.delete(db_dep)
+    db.commit()
+    return True
+
+
 ## Task priority score CRUD
 def get_priority_scores(db: Session) -> List[models.TaskPriorityScore]:
     return db.query(models.TaskPriorityScore).all()
