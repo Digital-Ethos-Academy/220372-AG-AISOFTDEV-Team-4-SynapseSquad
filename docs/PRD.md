@@ -21,9 +21,12 @@
 | ADR.md | [Architecture Design Record](./ADR.md) | Technical decisions with their justifications. |
 | SECURITY_REVIEW.md | [Security Review](./SECURITY_REVIEW.md) | Security vulnerabilities report and recommendations. |
 | UI/Wireframes | See /ui/ Folder | Draft UI generated using lab workflow, wireframes generated using Figma design. |
+| CICD_PIPELINE.md | [CI/CD](./CICD_PIPELINE.md)| This describes the build pipeline used to create the project. |
+| DOCKER_README.md | [DOCKER](./DOCKER_README.md)| This describes the build pipeline used to create the project. |
+| ENV_FORMAT.md | [ENV](./ENV_FORMAT.md)| This describes the needed environment variables in the .env file to run the project. |
 
 ## 1. Executive Summary & Vision
-Agile TaskIQ is a lightweight task management application designed to enhance productivity through AI-driven task prioritization. By integrating AI capabilities, the product aims to streamline task management for agile teams, software engineers, and consulting firms. The ultimate vision is to establish Agile TaskIQ as a leader in AI-enhanced task management solutions, offering unique features like T-shirt size recommendations to demonstrate AI capabilities and differentiate from competitors.
+Agile TaskIQ is a lightweight task management application designed to enhance productivity through AI-driven task prioritization. By integratinsg AI capabilities, the product aims to streamline task management for agile teams, software engineers, and consulting firms. The ultimate vision is to establish Agile TaskIQ as a leader in AI-enhanced task management solutions, offering unique features like T-shirt size recommendations to demonstrate AI capabilities and differentiate from competitors.
 
 ## 2. Problem Statement & Opportunity
 The task management market is saturated with tools that lack advanced prioritization capabilities. Agile teams and consulting firms face challenges in efficiently prioritizing tasks, leading to decreased productivity. Agile TaskIQ addresses this gap by offering AI-driven task prioritization, providing a significant market opportunity to capture a growing segment of users seeking innovative solutions.
