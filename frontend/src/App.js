@@ -192,6 +192,7 @@ function MainApp() {
                 allTasks={tasks}
                 onUpdateTask={handleUpdateTask}
                 onDeleteTask={handleDeleteTask}
+                onSelectTask={setSelectedTask}
               />
             </div>
           </div>
