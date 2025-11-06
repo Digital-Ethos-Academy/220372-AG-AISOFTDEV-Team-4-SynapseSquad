@@ -13,9 +13,8 @@ ENV REACT_APP_BACK_END_URL=$REACT_APP_BACK_END_URL
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies with legacy peer deps for React 19 compatibility
-RUN npm install --silent --legacy-peer-deps && \
-    npm cache clean --force
+# Install dependencies
+RUN npm install
 
 # Copy application code
 COPY . .
