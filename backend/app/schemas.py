@@ -272,4 +272,4 @@ class TaskTShirtScore(BaseModel):
     tshirt_size: str
     rationale: Optional[str] = None
     class Config:
-        orm_mode = True
+        from_attributes = True
