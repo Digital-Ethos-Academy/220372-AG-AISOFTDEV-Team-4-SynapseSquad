@@ -130,11 +130,11 @@ def _create_task(
     user_id: int,
     title: str,
     description: str | None,
-    deadline: str | None,
+    deadline: datetime | None,
     estimated_duration: int | None,
     status: str = "pending",
 ) -> models.Task:
-    now = _now_iso()
+    now = datetime.utcnow()
     task = models.Task(
         user_id=user_id,
         title=title,
@@ -159,7 +159,7 @@ def sample_tasks(db_session: Session, sample_user: Dict) -> List[Dict]:
             sample_user["id"],
             "Submit project report",
             "Send final report to manager",
-            (datetime.utcnow() + timedelta(days=2)).isoformat(),
+            datetime.utcnow() + timedelta(days=2),
             4,
             "pending",
         ),
@@ -168,7 +168,7 @@ def sample_tasks(db_session: Session, sample_user: Dict) -> List[Dict]:
             sample_user["id"],
             "Clean workspace",
             "Organize desk and files",
-            (datetime.utcnow() + timedelta(days=10)).isoformat(),
+            datetime.utcnow() + timedelta(days=10),
             1,
             "pending",
         ),
@@ -177,7 +177,7 @@ def sample_tasks(db_session: Session, sample_user: Dict) -> List[Dict]:
             sample_user["id"],
             "Review code",
             "Review pull requests",
-            (datetime.utcnow() + timedelta(days=1)).isoformat(),
+            datetime.utcnow() + timedelta(days=1),
             2,
             "in_progress",
         ),

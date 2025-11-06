@@ -38,8 +38,8 @@ def get_tasks(db: Session = Depends(get_db), current_user: models.User = Depends
             "deadline": t.deadline,
             "estimated_duration": t.estimated_duration,
             "status": t.status,
-            "created_at": t.created_at,
-            "updated_at": t.updated_at,
+            "created_at": t.created_at.isoformat() if t.created_at else None,
+            "updated_at": t.updated_at.isoformat() if t.updated_at else None,
             "priority_score": score,
             "tshirt_size": tshirt,
         })
@@ -79,8 +79,8 @@ def get_task(task_id: int, db: Session = Depends(get_db), current_user: models.U
         "deadline": t.deadline,
         "estimated_duration": t.estimated_duration,
         "status": t.status,
-        "created_at": t.created_at,
-        "updated_at": t.updated_at,
+        "created_at": t.created_at.isoformat() if t.created_at else None,
+        "updated_at": t.updated_at.isoformat() if t.updated_at else None,
         "priority_score": score,
         "tshirt_size": tshirt,
     }
@@ -116,8 +116,8 @@ def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db), current
             "deadline": db_task.deadline,
             "estimated_duration": db_task.estimated_duration,
             "status": db_task.status,
-            "created_at": db_task.created_at,
-            "updated_at": db_task.updated_at,
+            "created_at": db_task.created_at.isoformat() if db_task.created_at else None,
+            "updated_at": db_task.updated_at.isoformat() if db_task.updated_at else None,
             "priority_score": score,
             "tshirt_size": tshirt,
         }
@@ -161,8 +161,8 @@ def update_task(task_id: int, task: schemas.TaskUpdate, db: Session = Depends(ge
         "deadline": updated.deadline,
         "estimated_duration": updated.estimated_duration,
         "status": updated.status,
-        "created_at": updated.created_at,
-        "updated_at": updated.updated_at,
+        "created_at": updated.created_at.isoformat() if updated.created_at else None,
+        "updated_at": updated.updated_at.isoformat() if updated.updated_at else None,
         "priority_score": score,
         "tshirt_size": tshirt,
     }
