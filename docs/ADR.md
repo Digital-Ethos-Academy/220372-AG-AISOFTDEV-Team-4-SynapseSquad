@@ -49,8 +49,29 @@
 - **Decision:** Implement rule-based logic for task ranking and T-shirt size recommendation.
 - **Consequences:** Fast implementation, easy to explain, can be upgraded to ML in future.
 
+## ADR-008: Authentication & Security
+- **Status:** Accepted
+- **Context:** Need for secure user authentication and data protection.
+- **Decision:** 
+  - Use JWT (JSON Web Tokens) for stateless authentication
+  - Implement bcrypt password hashing with SHA256 fallback
+  - Require SECRET_KEY environment variable with default for development
+  - Enable CORS for frontend-backend communication
+- **Consequences:** Secure authentication, password protection, flexible for both dev and production environments.
+
+## ADR-009: SECRET_KEY Configuration
+- **Status:** Accepted
+- **Context:** Need to balance security with developer experience for course project.
+- **Decision:** Make SECRET_KEY optional with a safe default value for development, but issue warning when default is used.
+- **Consequences:** 
+  - Developers can run the app without configuration
+  - Production deployments are encouraged to set custom SECRET_KEY
+  - Warning reminds developers about security best practices
+
 ---
 
-## Notes
-- This ADR file will be updated with schema-specific decisions once schema.sql is available.
-- Security audit/report will be maintained as a living document (see PRD Section 13 and SECURITY.md).
+## Cross-References
+- [Product Requirements Document](./PRD.md)
+- [Architecture Document](./ARCHITECTURE.md)
+- [Security Review Report](./SECURITY_REVIEW.md)
+- [Database Schema](../backend/schema.sql)

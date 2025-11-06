@@ -14,10 +14,8 @@ services:
       - TESTING=true
       - DATABASE_PATH=/app/tests/test.db
     volumes:
-      # Mount backend code including test database
+      # Mount backend code
       - ./backend:/app
-      # Preserve test.db for integration tests
-      - ./backend/tests/test.db:/app/tests/test.db:ro
       # Prevent __pycache__ from being shared with host
       - /app/__pycache__
     command: >
