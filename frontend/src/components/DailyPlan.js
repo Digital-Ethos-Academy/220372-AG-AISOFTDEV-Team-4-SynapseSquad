@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
@@ -10,8 +10,6 @@ const DailyPlan = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [targetDate, setTargetDate] = useState(new Date().toISOString().split('T')[0]);
-  const [previewMode, setPreviewMode] = useState(false);
-  const [previewData, setPreviewData] = useState(null);
 
   const generateDailyPlan = async () => {
     try {
@@ -38,34 +36,6 @@ const DailyPlan = () => {
       const errorMessage = err.message || 'An unexpected error occurred while generating the daily plan.';
       setError(errorMessage);
       toast.error('Failed to generate daily plan', {
-        description: errorMessage,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const previewPlanData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await apiCall(`/daily-plan/preview?target_date=${targetDate}`);
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.detail || `HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      setPreviewData(data);
-      setPreviewMode(true);
-      toast.success('Daily plan data preview loaded!');
-    } catch (err) {
-      console.error("Error previewing daily plan data:", err);
-      const errorMessage = err.message || 'An unexpected error occurred while previewing the daily plan data.';
-      setError(errorMessage);
-      toast.error('Failed to preview daily plan data', {
         description: errorMessage,
       });
     } finally {
@@ -107,23 +77,13 @@ const DailyPlan = () => {
             />
           </div>
           
-          <div className="flex gap-2">
-            <button
-              onClick={previewPlanData}
-              disabled={loading}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? 'Loading...' : 'Preview Data'}
-            </button>
-            
-            <button
-              onClick={generateDailyPlan}
-              disabled={loading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? 'Generating...' : 'Generate Plan'}
-            </button>
-          </div>
+          <button
+            onClick={generateDailyPlan}
+            disabled={loading}
+            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? 'Generating...' : 'Generate Plan'}
+          </button>
         </div>
       </div>
 
@@ -139,62 +99,8 @@ const DailyPlan = () => {
         </div>
       )}
 
-      {/* Preview Mode */}
-      {previewMode && previewData && (
-        <div className="bg-white rounded-lg shadow-sm">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">Data Preview</h3>
-              <button
-                onClick={() => setPreviewMode(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕ Close
-              </button>
-            </div>
-            <p className="text-sm text-gray-600 mt-1">
-              Preview of data that would be used for plan generation
-            </p>
-          </div>
-          
-          <div className="p-6 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">{previewData.tasks_count}</div>
-                <div className="text-sm text-blue-800">Total Tasks</div>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">{previewData.dependencies_count}</div>
-                <div className="text-sm text-green-800">Dependencies</div>
-              </div>
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">{formatDate(previewData.target_date)}</div>
-                <div className="text-sm text-purple-800">Target Date</div>
-              </div>
-            </div>
-
-            {previewData.tasks && previewData.tasks.length > 0 && (
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2">Tasks to be planned:</h4>
-                <div className="max-h-60 overflow-y-auto space-y-2">
-                  {previewData.tasks.map((task, index) => (
-                    <div key={index} className="bg-gray-50 p-3 rounded border text-sm">
-                      <div className="font-medium">{task.title}</div>
-                      <div className="text-gray-600">Priority: {task.priority} | T-shirt: {task.tshirt_size}</div>
-                      {task.description && (
-                        <div className="text-gray-500 mt-1">{task.description}</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Generated Plan Display */}
-      {planData && !previewMode && (
+      {planData && (
         <div className="bg-white rounded-lg shadow-sm">
           <div className="p-6 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">
@@ -211,10 +117,10 @@ const DailyPlan = () => {
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
-                  h1: ({node, ...props}) => <h1 className="text-2xl font-bold mb-4 text-gray-900" {...props} />,
-                  h2: ({node, ...props}) => <h2 className="text-xl font-semibold mb-3 mt-6 text-gray-800" {...props} />,
-                  h3: ({node, ...props}) => <h3 className="text-lg font-medium mb-2 mt-4 text-gray-700" {...props} />,
-                  h4: ({node, ...props}) => <h4 className="text-base font-medium mb-2 mt-3 text-gray-700" {...props} />,
+                  h1: ({node, children, ...props}) => <h1 className="text-2xl font-bold mb-4 text-gray-900" {...props}>{children}</h1>,
+                  h2: ({node, children, ...props}) => <h2 className="text-xl font-semibold mb-3 mt-6 text-gray-800" {...props}>{children}</h2>,
+                  h3: ({node, children, ...props}) => <h3 className="text-lg font-medium mb-2 mt-4 text-gray-700" {...props}>{children}</h3>,
+                  h4: ({node, children, ...props}) => <h4 className="text-base font-medium mb-2 mt-3 text-gray-700" {...props}>{children}</h4>,
                   p: ({node, ...props}) => <p className="mb-3 text-gray-600 leading-relaxed" {...props} />,
                   ul: ({node, ...props}) => <ul className="list-disc list-inside mb-3 space-y-1" {...props} />,
                   ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-3 space-y-1" {...props} />,
@@ -243,14 +149,14 @@ const DailyPlan = () => {
           <div className="flex flex-col items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
             <p className="text-gray-600">
-              {previewMode ? 'Loading preview data...' : 'Generating your daily plan...'}
+              Generating your daily plan...
             </p>
           </div>
         </div>
       )}
 
       {/* Empty State */}
-      {!planData && !loading && !error && !previewMode && (
+      {!planData && !loading && !error && (
         <div className="bg-white rounded-lg shadow-sm p-12">
           <div className="text-center">
             <div className="text-gray-400 mb-4">
