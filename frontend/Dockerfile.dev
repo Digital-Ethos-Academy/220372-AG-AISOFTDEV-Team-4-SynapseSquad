@@ -14,9 +14,12 @@ ENV PATH=/app/node_modules/.bin:$PATH
 ARG REACT_APP_BACK_END_URL=http://localhost:8000
 ENV REACT_APP_BACK_END_URL=$REACT_APP_BACK_END_URL
 
-# Copy package files and existing node_modules
+# Copy package files
 COPY package*.json ./
-COPY node_modules ./node_modules
+
+# Install dependencies with legacy peer deps for React 19 compatibility
+RUN npm install --silent --legacy-peer-deps && \
+    npm cache clean --force
 
 # Copy application code
 COPY . .

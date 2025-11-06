@@ -10,14 +10,17 @@ WORKDIR /app
 ARG REACT_APP_BACK_END_URL=http://localhost:8000
 ENV REACT_APP_BACK_END_URL=$REACT_APP_BACK_END_URL
 
-# Copy package files and node_modules from local environment
+# Copy package files
 COPY package*.json ./
-COPY node_modules ./node_modules
+
+# Install dependencies with legacy peer deps for React 19 compatibility
+RUN npm install --silent --legacy-peer-deps && \
+    npm cache clean --force
 
 # Copy application code
 COPY . .
 
-# Build production bundle using existing node_modules
+# Build production bundle
 # The REACT_APP_BACK_END_URL will be baked into the build
 RUN npm run build
 
